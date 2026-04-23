@@ -1,0 +1,16 @@
+15
+Declare int a 3
+Print a
+Indent
+Declare int a 4
+Print a
+Dedent
+Print a
+Declare string b "hello"
+SelfAdd b " world"
+Print b
+Indent
+Declare string c "test"
+Add c b b
+Print c
+Dedent

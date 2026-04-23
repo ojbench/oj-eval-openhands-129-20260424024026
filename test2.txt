@@ -1,0 +1,11 @@
+10
+Declare int a 3
+Declare int a 4
+Print a
+Print b
+Dedent
+Dedent
+Add a b c
+Indent
+Declare string x "test"
+Add a x x

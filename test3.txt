@@ -1,0 +1,9 @@
+8
+Declare int x 10
+SelfAdd x 5
+Print x
+Declare string s "Hello"
+SelfAdd s " World"
+Print s
+SelfAdd x "invalid"
+SelfAdd s 123
