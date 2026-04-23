@@ -141,17 +141,12 @@ int main() {
 
     int n;
     cin >> n;
-    cin.ignore();
 
     ScopeManager manager;
 
     for (int i = 0; i < n; i++) {
-        string line;
-        getline(cin, line);
-
-        // Parse command
-        size_t pos = line.find(' ');
-        string cmd = (pos == string::npos) ? line : line.substr(0, pos);
+        string cmd;
+        cin >> cmd;
         
         bool valid = true;
 
@@ -161,47 +156,54 @@ int main() {
             valid = manager.dedent();
         } else if (cmd == "Declare") {
             // Parse: Declare [type] [variable_name] [value]
-            size_t pos1 = line.find(' ', pos + 1);
-            size_t pos2 = line.find(' ', pos1 + 1);
+            string type, var_name, value;
+            cin >> type >> var_name;
             
-            if (pos1 == string::npos || pos2 == string::npos) {
-                valid = false;
+            if (type == "int") {
+                cin >> value;
+            } else if (type == "string") {
+                // Read quoted string
+                cin >> ws; // Skip whitespace
+                if (cin.peek() == '"') {
+                    cin.get(); // Skip opening quote
+                    getline(cin, value, '"');
+                    value = "\"" + value + "\"";
+                } else {
+                    valid = false;
+                }
             } else {
-                string type = line.substr(pos + 1, pos1 - pos - 1);
-                string var_name = line.substr(pos1 + 1, pos2 - pos1 - 1);
-                string value = line.substr(pos2 + 1);
-                
+                valid = false;
+            }
+            
+            if (valid) {
                 valid = manager.declare(type, var_name, value);
             }
         } else if (cmd == "Add") {
             // Parse: Add [result] [value1] [value2]
-            size_t pos1 = line.find(' ', pos + 1);
-            size_t pos2 = line.find(' ', pos1 + 1);
+            string result, value1, value2;
+            cin >> result >> value1 >> value2;
             
-            if (pos1 == string::npos || pos2 == string::npos) {
-                valid = false;
-            } else {
-                string result = line.substr(pos + 1, pos1 - pos - 1);
-                string value1 = line.substr(pos1 + 1, pos2 - pos1 - 1);
-                string value2 = line.substr(pos2 + 1);
-                
-                valid = manager.add(result, value1, value2);
-            }
+            valid = manager.add(result, value1, value2);
         } else if (cmd == "SelfAdd") {
             // Parse: SelfAdd [variable_name] [value]
-            size_t pos1 = line.find(' ', pos + 1);
+            string var_name, value;
+            cin >> var_name;
             
-            if (pos1 == string::npos) {
-                valid = false;
+            // Peek to see if it's a string or int
+            cin >> ws;
+            if (cin.peek() == '"') {
+                cin.get(); // Skip opening quote
+                getline(cin, value, '"');
+                value = "\"" + value + "\"";
             } else {
-                string var_name = line.substr(pos + 1, pos1 - pos - 1);
-                string value = line.substr(pos1 + 1);
-                
-                valid = manager.self_add(var_name, value);
+                cin >> value;
             }
+            
+            valid = manager.self_add(var_name, value);
         } else if (cmd == "Print") {
             // Parse: Print [variable_name]
-            string var_name = line.substr(pos + 1);
+            string var_name;
+            cin >> var_name;
             valid = manager.print(var_name);
         } else {
             valid = false;
